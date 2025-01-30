@@ -16,6 +16,7 @@ rule qc_report1:
         fwd=config["forward_read_suffix"],
         rev=config["reverse_read_suffix"],
         primer_removal=config["primer_removal"],
+        primer_investigation=config["primer_investigation"],
         Nread=config["path"]+"/"+config["output_dir"]+"/dada2/Nreads.tsv",
         quality=config["path"]+"/"+config["output_dir"]+"/figures/quality/",
         
@@ -23,7 +24,7 @@ rule qc_report1:
         a=config["output_dir"]+"/QC_html_report/"+"qc_report_1.html",
     shell:
         """
-        Rscript -e 'rmarkdown::render(input="{params.path}/utils/scripts/dada2/qc_report_1.Rmd",output_file="{params.path}/{output.a}", params= list(quality="{params.quality}", out_dir="{params.outdir}", fwd_suffix= "{params.fwd}", rev_suffix="{params.rev}", primer_removal= "{params.primer_removal}", Nread ="{params.Nread}"))'
+        Rscript -e 'rmarkdown::render(input="{params.path}/utils/scripts/dada2/qc_report_1.Rmd",output_file="{params.path}/{output.a}", params= list(quality="{params.quality}", out_dir="{params.outdir}", fwd_suffix= "{params.fwd}", rev_suffix="{params.rev}", primer_removal= "{params.primer_removal}", primer_investigation= "{params.primer_investigation}", Nread ="{params.Nread}"))'
         """
 
 
