@@ -30,8 +30,6 @@ rule all:
         config["output_dir"]+"/figures/quality/afterdada2FilterQualityPlots"+ config["forward_read_suffix"]+".png",
         config["output_dir"]+"/figures/quality/afterdada2FilterQualityPlots"+ config["reverse_read_suffix"]+".png",
         expand(config["output_dir"]+"/taxonomy/dada2_tables/{ref}_RDP.tsv",ref= config['RDP_dbs'].keys()),
-        config["output_dir"]+"/phylogeny/ASV_aligned.fasta",
-        config["output_dir"]+"/phylogeny/ASV_tree.nwk",
         config["output_dir"]+"/dada2/Nreads.tsv",
         config["output_dir"]+"/dada2/Nreads_filtered.txt",
         config["output_dir"]+"/dada2/percent_phix.txt",
