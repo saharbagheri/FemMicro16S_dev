@@ -8,7 +8,7 @@ rule filterNsRaw:
         R1=config["output_dir"]+"/filtN/{sample}" + config["forward_read_suffix"] + config["compression_suffix"],
         R2=config["output_dir"]+"/filtN/{sample}" + config["reverse_read_suffix"] + config["compression_suffix"]
     conda:
-        "dada2"
+        "dada2_new"
     script:
         "../scripts/dada2/filtN.R"
 
