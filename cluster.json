@@ -70,6 +70,10 @@
   {
     "cpus-per-task" : 25,
   },
+  "fasta_file" :
+  {
+    "cpus-per-task" : 25,
+  },
   "qc_report1" :
   {
     "cpus-per-task" : 25,
