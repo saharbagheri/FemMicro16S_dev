@@ -44,7 +44,7 @@ out_dir <-params$out_dir
 
 ```{r all ASVs length distribution abundance, results='asis', echo=F}
 
-files <- list.files(path = snakemake@params[["length_distribution"]], pattern = "distribution", full.names =TRUE)
+files <- list.files(path = length_distribution, pattern = "distribution", full.names =TRUE)
 
 
 for (f in files) {
@@ -96,9 +96,9 @@ ps_genus<- tax_glom(ps, taxrank="Genus")
 options(browser = "echo") #plot_krona is set to open the krona plot as a separate html file, this stops it
 
 # Plot Krona chart
-a <- psadd::plot_krona(physeq=ps_genus, output=snakemake@params[['krona']], variable="samples", trim = TRUE)
+a <- psadd::plot_krona(physeq=ps_genus, output=krona, variable="samples", trim = TRUE)
 
-file=paste(snakemake@config[['path']],snakemake@config[['output_dir']], sep = "/")
+file=paste(path,out_dir, sep = "/")
 
 ```
 
