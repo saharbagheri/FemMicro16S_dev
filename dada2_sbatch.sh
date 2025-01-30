@@ -4,7 +4,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --time=2-00:00:00
+#SBATCH --time=7-00:00:00
 #SBATCH --mem=38G
 #SBATCH --error=record_dada2.%J.err
 #SBATCH --output=record_dada2.%J.out
@@ -37,6 +37,7 @@ cp -rf logs $snakemake_file_dir
 cp -rf utils $snakemake_file_dir
 
 bash Version_check.sh > used_tools_versions.txt
+bash check_jobs.sh 
 
 echo "Finished at: `date`"
 
