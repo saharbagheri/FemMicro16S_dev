@@ -19,7 +19,6 @@ rule qc_report1:
         primer_investigation=config["primer_investigation"],
         Nread=config["path"]+"/"+config["output_dir"]+"/dada2/Nreads.tsv",
         quality=config["path"]+"/"+config["output_dir"]+"/figures/quality/",
-        
     output:
         config["output_dir"]+"/QC_html_report/"+"qc_report_1.html",
     shell:
