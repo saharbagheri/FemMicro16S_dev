@@ -26,7 +26,7 @@ reverse_read_suffix: "_R2"
 compression_suffix: ".fastq.gz"     #".fastq.gz" or ".fastq"
 
 #Required threads, Please make sure these numbers with cluster.json numbers match
-threads: 20  #General rules
+threads: 25  #General rules
 generateSeqtab_threads: 52  #Specific rule
 taxonomy_threads: 40  #Specific rule
 
