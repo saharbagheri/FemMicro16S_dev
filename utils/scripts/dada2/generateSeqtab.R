@@ -1,4 +1,5 @@
 suppressMessages(library(dada2))
+suppressMessages(library(BiocParallel))
 
 
 sam.names= snakemake@params[["samples"]]
@@ -24,22 +25,37 @@ names(dadaFs) <- sam.names
 names(filtFs) <- sam.names
 names(filtRs) <- sam.names
 
+print(paste0("threads: ",snakemake@threads))
 
+#Defining number of cores to use
+param <- MulticoreParam(workers = snakemake@threads)
 
-for(sam in sam.names) {
+# Wrap your per-sample code in a function:
+process_sample <- function(sam) {
   cat("Processing:", sam, "\n")
-
+  
   derepF <- derepFastq(filtFs[[sam]])
-  ddF <- dada(derepF, err=errF, multithread=snakemake@threads)
+  ddF <- dada(derepF, err = errF, multithread = snakemake@threads)
 
-  dadaFs[[sam]] <- ddF
   derepR <- derepFastq(filtRs[[sam]])
-  ddR <- dada(derepR, err=errR, multithread=snakemake@threads)
+  ddR <- dada(derepR, err = errR, multithread = snakemake@threads)
 
   merger <- mergePairs(ddF, derepF, ddR, derepR)
-  mergers[[sam]] <- merger
+
+  # Return whatever you need (one approach is to return as a list)
+  list(ddF = ddF, merger = merger)
 }
-rm(derepF); rm(derepR)
+
+# Now run in parallel over sam.names
+results <- bplapply(sam.names, process_sample, BPPARAM = param)
+
+# Collect results
+# results is a list of length length(sam.names)
+# Each element is itself a list with ddF and merger
+names(results) <- sam.names
+
+dadaFs   <- lapply(results, `[[`, "ddF")
+mergers  <- lapply(results, `[[`, "merger")
 
 
 ## ---- seqtab ----
