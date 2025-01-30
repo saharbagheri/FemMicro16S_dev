@@ -257,7 +257,6 @@ for (i in reads){
 
 
 
-names<-unique(sapply(strsplit(object_names,split=paste0(forward_read_suffix,"|",reverse_read_suffix)),`[`,1))
 
 # Loop through the list of object names and combine them using rbind
 for (i in names){
