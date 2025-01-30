@@ -6,11 +6,11 @@
     "nodes": 1,
     "ntasks": 1,
     "cpus-per-task": 1,
-    "time" : "2-00:00:00",
+    "time" : "7-00:00:00",
     "mem" : "38G",
     "output" : "logs/{rule}.{wildcards}.out",
     "error" : "logs/{rule}.{wildcards}.err"
-  },
+ },
   "fastqcRaw" :
   {
     "time" : "20:00:00",
@@ -20,5 +20,60 @@
   {
     "time" : "20:00:00",
     "mem" : "50G",
+  },
+  "dada2Filter" :
+  {
+    "cpus-per-task" : 20,
+  },
+  "learnErrorRates" :
+  {
+    "cpus-per-task" : 20,
+  },
+  "generateSeqtab" :
+  {
+    "partition" : "cpu2023", "bigmem"
+    "cpus-per-task" : 52,
+    "mem" : "100G",
+    "time" : "1-00:00:00",    
+  },
+  "removeChimeras" :
+  {
+    "cpus-per-task" : 20,
+  },
+  "plotASVLength" :
+  {
+    "cpus-per-task" : 20,
+  },
+  "RDPtaxa" :
+  {
+    "partition" : "cpu2019","cpu2021","cpu2022","cpu2023", "bigmem",
+    "cpus-per-task" : 40,
+    "mem" : "180G",
+    "time" : "1-00:00:00",
+  },
+  "cutAdapt" :
+  {
+    "cpus-per-task" : 20,
+  },
+  "cutAdaptQc" :
+  {
+    "cpus-per-task" : 20,
+  },
+  "vsearchGTDB" :
+  {
+    "cpus-per-task" : 20,
+  },
+  "vsearchURE" :
+  {
+    "cpus-per-task" : 20,
+  },
+  "vsearchParse" :
+  {
+    "cpus-per-task" : 20,
+  },
+  "qc_report" :
+  {
+    "cpus-per-task" : 25,
+    "mem" : "200G",
   }
 }
