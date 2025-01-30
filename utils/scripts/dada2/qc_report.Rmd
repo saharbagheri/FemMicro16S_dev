@@ -141,7 +141,7 @@ in_dir<-paste0(snakemake@config[['output_dir']],"/seqkit_samples")
 forward_read_suffix <- snakemake@config[['forward_read_suffix']]
 reverse_read_suffix <- snakemake@config[['reverse_read_suffix']]
 primer_removal <- snakemake@config[['primer_removal']]
-
+primer_investigation<-snakemake@config[['primer_investigation']]
 
 # Convert the value to logical if necessary
 if (is.character(primer_removal)) {
@@ -152,11 +152,23 @@ if (is.character(primer_removal)) {
   }
 }
 
-
+# Convert the valuTRUE# Convert the value to logical if necessary
+if (is.character(primer_investigation)) {
+  if (tolower(primer_investigation) == "true") {
+    primer_investigation <- TRUE
+  } else if (tolower(primer_investigation) == "false") {
+    primer_investigation <- FALSE
+  }
+}
 
 ##reading files in and save them as objects
-object_names <- list.files(in_dir, pattern = paste0(forward_read_suffix,"|",reverse_read_suffix),full.names = T)
-
+if(primer_removal== TRUE & primer_investigation==TRUE){
+  object_names <- list.files(in_dir, pattern = paste0(forward_read_suffix,"|",reverse_read_suffix),full.names = T)
+} else if (primer_removal== TRUE & primer_investigation==FALSE) {
+  object_names <- list.files(in_dir, pattern = paste0(forward_read_suffix,"|",reverse_read_suffix),full.names = T)
+  object_names=object_names[!grepl(pattern = "primerRMV",x = object_names)]
+  names<-unique(sapply(strsplit(object_names,split=paste0(forward_read_suffix,"|",reverse_read_suffix)),`[`,1))
+}
 
 for (i in 1:length(object_names)) {
   # Read in the object
@@ -210,7 +222,7 @@ for (i in object_names) {
 #add two columns of readtype and filetype to all object files based on a name
 
 # Conditional logic
-if (primer_removal == TRUE) {
+if (primer_removal == TRUE & primer_investigation==TRUE) {
   names <- c("raw", "dada2", "primerRMV", "cutadapt")
 } else {
   names <- c("raw", "dada2", "cutadapt")
