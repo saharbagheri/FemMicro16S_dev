@@ -36,6 +36,7 @@ compression_suffix: ".fastq.gz"     #".fastq.gz" or ".fastq"
 ##***If primers need to be removed set this to True and add the primer sequences***
 
 primer_removal: False  #True or False
+primer_investigation: False #True or False
 
 primers:
 fwd_primer: ""
@@ -96,8 +97,8 @@ truncQ: 2
 
 #Subsampling reads for learning error rates
 ##check the logs/learnErrorRates..out file to check the quantity of bases, reads, and samples utilized for learning error rates.
-subsample: False  #True or False
-subsample2LearnErrorRate: 0.25
+subsample: True  #True or False
+subsample2LearnErrorRate: 0.002
 
 
 #Default 1e8. The minimum number of total bases to use for error rate learning.
