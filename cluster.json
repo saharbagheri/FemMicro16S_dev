@@ -31,10 +31,9 @@
   },
   "generateSeqtab" :
   {
-    "partition" : "cpu2023", "bigmem"
+    "partition" : "cpu2023"،
     "cpus-per-task" : 52,
-    "mem" : "100G",
-    "time" : "1-00:00:00",    
+    "mem" : "450G",
   },
   "removeChimeras" :
   {
