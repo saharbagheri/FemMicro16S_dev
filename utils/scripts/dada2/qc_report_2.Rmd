@@ -19,29 +19,16 @@ params:
 ---
 
 
-{r needed packages,echo=F}
-
-################################################################################
-##  Load libraries
-################################################################################
-suppressMessages(library(DT))
+```{r needed packages,echo=F}
+suppressMessages(library(phyloseq))
+suppressMessages(library(RColorBrewer))
+suppressMessages(library(stringr))
+suppressMessages(library(dada2))
+suppressMessages(library(tidyverse))
 suppressMessages(library(dplyr))
 suppressMessages(library(ggplot2))
-suppressMessages(library(psadd))
-suppressMessages(library(phyloseq))
-suppressMessages(library(dada2))
-suppressMessages(library(RColorBrewer))
-suppressMessages(library(limma))
-suppressMessages(library(tidyverse))
 suppressMessages(library(reshape2))
 suppressMessages(library(kableExtra))
-suppressMessages(library(waterfalls))
-suppressMessages(library(ggpubr))
-suppressMessages(library(plotly))
-suppressMessages(library(htmlwidgets))
-suppressMessages(library(stringr))
-suppressMessages(library(foreach))
-suppressMessages(library(doParallel))
 ```
 
 
@@ -67,8 +54,8 @@ source<- params$source
 ```{r, warning=F, message=F, results='asis',echo=F,fig.width=10, fig.height=7}
 
 #Read sequence data and taxonomy data
-seqtab <- data.frame(read.csv(file = snakemake@params[["seqtab"]],row.names = 1))
-taxa <- read.table(snakemake@params[["taxonomy"]], header = TRUE, sep = "\t", check.names = FALSE)
+seqtab <- data.frame(read.csv(file = seqtab,row.names = 1))
+taxa <- read.table(taxonomy, header = TRUE, sep = "\t", check.names = FALSE)
 
 # Prepare the sample data
 data <- data.frame(samples = rownames(seqtab))
@@ -89,17 +76,17 @@ col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_co
 
 
 # List of positive control samples
-samples <- unlist(base::strsplit(snakemake@params[["pos"]], split = "\\|"))
+samples <- unlist(base::strsplit(pos, split = "\\|"))
 
 
 if (length(samples) > 0 && !all(samples == "")) {
   
   # Define known bacterial community counts for each reference file
-  ref_files <- list.files(snakemake@params[["ref"]])
+  ref_files <- list.files(ref)
   names(ref_files)<-stringr::str_split_fixed(ref_files, "\\.", 2)[, 1]
   
   #read in community composition of reference files in alphabetic order
-  source(snakemake@params[["source"]])
+  source(source)
   
   
   for (i in samples) {
@@ -108,7 +95,7 @@ if (length(samples) > 0 && !all(samples == "")) {
     
     # Iterate over each reference file
     for (j in names(ref_files)) {
-      mock.ref <- getSequences(paste0(snakemake@params[["ref"]],ref_files[[j]]))
+      mock.ref <- getSequences(paste0(ref,ref_files[[j]]))
       unqs.mock <- mock@otu_table@.Data
       
       # Retrieve the expected bacterial community counts for the current reference file
@@ -203,7 +190,7 @@ prevalence, while points further to the right on the X-axis have higher sequence
 ```{r, investigating ASVs,echo=F,messages=FALSE, warning=FALSE,include=T}
 
 
-seqtab <- data.frame(read.csv(file = snakemake@params[["seqtab"]],row.names = 1))
+seqtab <- data.frame(read.csv(file = seqtab,row.names = 1))
 
 # Calculate prevalence for each taxa
 Prevalence <- seqtab %>%
