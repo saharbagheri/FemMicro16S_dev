@@ -4,6 +4,13 @@ author: "IMC Bioinformatics"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 params:
    rmd: "qc_report.Rmd"
+   quality: ""
+   out_dir: ""
+   fwd_suffix: ""
+   rev_suffix: ""
+   primer_removal: ""
+   primer_investigation: ""
+   Nread: ""
 output:
 html_document:
     theme: flatly
@@ -36,7 +43,25 @@ suppressMessages(library(waterfalls))
 suppressMessages(library(ggpubr))
 suppressMessages(library(plotly))
 suppressMessages(library(htmlwidgets))
+```
 
+
+```{r needed files, echo=F}
+quality       <- params$quality
+out_dir       <- params$out_dir
+fwd_suffix    <- params$fwd_suffix
+rev_suffix    <- params$rev_suffix
+primer_removal<- params$primer_removal
+Nread         <- params$Nread
+
+
+
+#print(paste("quality = ", quality, "\n"))
+#print(paste("out_dir = ", out_dir, "\n"))
+#print(paste("Forward reads file  = ", fwd_suffix, "\n"))
+#print(paste("Reverse reads file  = ", rev_suffix, "\n"))
+#print(paste("primer-removal  = ", primer_removal, "\n"))
+#print(paste("Nread file = ",Nread, "\n"))
 
 ```
 
@@ -65,7 +90,7 @@ position (this is more useful for other sequencing technologies, as Illumina rea
 
 ```{r,results='asis', echo=F}
 
-files <- list.files(path = snakemake@params[["quality"]], pattern = "raw", full.names = TRUE)
+files <- list.files(path = quality, pattern = "raw", full.names = TRUE)
 
 for (f in files) {
   cat(paste0("![](", f, "){width=50%}"))
@@ -86,7 +111,7 @@ for (f in files) {
 
 ```{r, results='asis',echo=F}
 
-files <- list.files(path = snakemake@params[["quality"]], pattern = "afterQC", full.names =TRUE)
+files <- list.files(path = quality, pattern = "afterQC", full.names =TRUE)
 
 for (f in files) {
   cat(paste0("![](", f, "){width=50%}"))
@@ -105,7 +130,7 @@ for (f in files) {
 
 ```{r, results='asis', echo=F}
 
-files <- list.files(path = snakemake@params[["quality"]], pattern = "afterdada2", full.names =TRUE)
+files <- list.files(path = quality, pattern = "afterdada2", full.names =TRUE)
 
 for (f in files) {
   cat(paste0("![](", f, "){width=50%}"))
@@ -134,14 +159,14 @@ removed for improving the visualization.**
 
 ```{r plotly, echo=F,fig.width=10,fig.height=5}
 
-in_dir<-paste0(snakemake@config[['output_dir']],"/seqkit_samples")
+in_dir<-paste0(out_dir,"/seqkit_samples")
 
 
 
-forward_read_suffix <- snakemake@config[['forward_read_suffix']]
-reverse_read_suffix <- snakemake@config[['reverse_read_suffix']]
-primer_removal <- snakemake@config[['primer_removal']]
-primer_investigation<-snakemake@config[['primer_investigation']]
+forward_read_suffix <- fwd_suffix
+reverse_read_suffix <- rev_suffix
+primer_removal <- primer_removal
+primer_investigation<-primer_investigation
 
 # Convert the value to logical if necessary
 if (is.character(primer_removal)) {
@@ -416,7 +441,7 @@ plotly_p
 
 ```{r,echo=F,messages=FALSE, warning=FALSE}
 
-reads<-read.csv(snakemake@params[["Nread"]],sep="\t")
+reads<-read.csv(Nread,sep="\t")
 
 ```
 
@@ -599,267 +624,5 @@ coord_cartesian(ylim=c(0, max_count + 30))#+labs(caption="Binwidth is 5.")
 ggarrange(A,B)
 
 ```
-
-<br>
-<br>
-<br>
-<br>
-<br>
-
-# **Investigating ASVs**
-
-<br>
-
-## Bacterial composition in the positive controls
-
-<br>
-
-
-```{r, warning=F, message=F, results='asis',echo=F,fig.width=10, fig.height=7}
-
-#Read sequence data and taxonomy data
-seqtab <- data.frame(read.csv(file = snakemake@params[["seqtab"]],row.names = 1))
-taxa <- read.table(snakemake@params[["taxonomy"]], header = TRUE, sep = "\t", check.names = FALSE)
-
-# Prepare the sample data
-data <- data.frame(samples = rownames(seqtab))
-rownames(data) <- data$samples
-
-
-# Create a phyloseq object
-ps <- phyloseq(otu_table(as.matrix(seqtab), taxa_are_rows = FALSE),
-               sample_data(data),
-               tax_table(as.matrix(taxa)))
-
-
-
-# Prepare color palette
-n <- 74
-qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
-col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
-
-
-# List of positive control samples
-samples <- unlist(base::strsplit(snakemake@params[["pos"]], split = "\\|"))
-
-
-if (length(samples) > 0 && !all(samples == "")) {
-  
-  # Define known bacterial community counts for each reference file
-  ref_files <- list.files(snakemake@params[["ref"]])
-  names(ref_files)<-stringr::str_split_fixed(ref_files, "\\.", 2)[, 1]
-  
-  #read in community composition of reference files in alphabetic order
-  source(snakemake@params[["source"]])
-  
-  
-  for (i in samples) {
-    mock <- prune_samples(ps@sam_data$samples == i, ps)
-    mock <- prune_taxa(colSums(mock@otu_table) > 0, mock)
-    
-    # Iterate over each reference file
-    for (j in names(ref_files)) {
-      mock.ref <- getSequences(paste0(snakemake@params[["ref"]],ref_files[[j]]))
-      unqs.mock <- mock@otu_table@.Data
-      
-      # Retrieve the expected bacterial community counts for the current reference file
-      expected_counts <- community_counts[[j]]
-      
-      match.ref <- as.data.frame(sapply(colnames(unqs.mock), function(x) grepl(x, mock.ref)))
-      
-      match.ref$species <- stringr::str_split_fixed(names(mock.ref), "_16", 2)[, 1]
-      
-      maps <- gather(data = match.ref, key = "seqs", value = "present", -species) %>%
-        dplyr::filter(present == TRUE)
-
-        #sometimes there is overlap between positive control reference files bacterial composition so samples get matched with a reference when there is >60% similar bacterial composition
-
-        if(nrow(maps)>0 && mean(unique(match.ref$species) %in% unique(maps$species))*100 > 60){
-        maps$abundance <- c(mock@otu_table[, maps$seqs])
-        
-        tot_abund<-maps %>% summarise(abundance=sum(abundance))
-        
-        temp=maps %>% dplyr::group_by(species) %>% dplyr::summarise("Observed"=round(100*(sum(abundance)/unlist(tot_abund)),digits = 1))
-        colnames(temp)[1]<-"Taxa"
-        
-        temp<-left_join(expected_counts,temp,by="Taxa") %>%
-        mutate(Observed = replace_na(Observed, 0))
-               
-        # Plotting
-        A <- ggplot(reshape2::melt(as.data.frame(temp)), aes(x = variable, y = value, fill = Taxa)) +
-          geom_bar(colour = "black", position = "stack", stat = "identity", width = 0.8) +
-          xlab(NULL) +
-          ggtitle(paste0("Bacterial profile in ", i)) +
-          theme(legend.position = "right",
-                axis.text.x = element_text(angle = 90, size = 15, colour = "black", vjust = 0.9, hjust = 0.83, face = "bold"),
-                axis.title.y = element_text(size = 15, face = "bold"),
-                axis.title.x = element_text(size = 15, face = "bold"),
-                legend.title = element_text(size = 12, face = "bold"),
-                legend.text = element_text(size = 12, face = "bold", colour = "black"),
-                axis.text.y = element_text(colour = "black", size = 13, face = "bold"),
-                plot.caption = element_text(hjust = 0, vjust = 0, size = 17, face = "bold", colour = "red"),
-                plot.title = element_text(size = 15, face = "bold"),
-                strip.text.x = element_text(size = 15, colour = "black")) +
-          ylab("Counts") +
-          scale_fill_manual(values = col_vector) +
-          theme(panel.background = element_blank(),
-                panel.border = element_rect(fill = NA, color = "black"),
-                panel.grid.major = element_blank(),
-                panel.grid.minor = element_blank(),
-                axis.line = element_line(colour = "black"))+guides(fill=guide_legend(nrow=21,byrow=F))
-        print(A)
-        
-        cat("<br><br>")
-        
-        B <- kable(temp, format = "html", caption = "Relative abundance table of taxa found in the positive control sample") %>%
-          kable_styling() %>%
-          column_spec(1:ncol(temp), width = "6cm")
-        print(B)
-        
-        cat("<br><br>")
-        cat("<br><br>")
-        cat("<br><br>")
-        cat("<br><br>")
-        
-      }
-    }
-  }
-  
-} else {
-  cat("There was no positive control in this run")
-  cat("<br><br>")
-  cat("<br><br>")
-  cat("<br><br>")
-  cat("<br><br>")
-  
-}
-
-
-```
-
-
-
-## ASVs prevalence and Abudnance
-
-<br>
-This graph depicts the prevalence and abundance of Amplicon Sequence Variants (ASVs) across multiple samples. The X-axis represent
-s the abundance of each ASV, which is the total count of sequences assigned to that ASV. The Y-axis represents the prevalence of
-each ASV, indicating the number of samples in which the ASV is found. Each point on the graph represents a single ASV, with its po
-sition determined by its abundance and prevalence. Points higher on the Y-axis are found in more samples, indicating higher
-prevalence, while points further to the right on the X-axis have higher sequence counts, indicating higher abundance.
-
-<br>
-
-
-```{r, investigating ASVs,echo=F,messages=FALSE, warning=FALSE,include=T}
-
-
-seqtab <- data.frame(read.csv(file = snakemake@params[["seqtab"]],row.names = 1))
-
-# Calculate prevalence for each taxa
-Prevalence <- seqtab %>%
-  summarise_all(~sum(. > 0)) %>%    # Prevalence: Count of non-zero entries for each taxa
-  t() %>%
-  as.data.frame() %>%
-  mutate(Taxa = rownames(.))
-
-colnames(Prevalence) <- c("Prevalence", "Taxa")
-
-# Calculate abundance for each taxa
-Abundance <- seqtab %>% 
-  t() %>%
-  rowSums() %>%  
-  as.data.frame() 
-
-Abundance$Taxa <- rownames(Abundance)
-
-colnames(Abundance) <- c("Abundance", "Taxa")
-
-# Joining prevalence and abundance
-df <- left_join(Prevalence, Abundance, by = "Taxa")
-
-# Melting the data for boxplot visualization
-df1 <- reshape2::melt(df, id.vars = "Taxa", value.name = "count")
-
-# Scatter plot
-ggplot(df, aes(x = Abundance, y = Prevalence)) +
-  geom_point(aes(color = ifelse(Prevalence > 10 & Abundance > 150, "#77c593", "black"))) +
-  scale_color_identity() +
-  ggtitle("Overview of ASVs focusing on their prevalence and abundance")+
-  labs(caption = paste0("Points in green represent ASVs with prevalence > 10 and abundance > 150.\n",
-  "Total number of ASVs is ", length(df$Taxa), " in ", nrow(seqtab) ," samples."))+
-  theme(plot.caption = element_text(hjust = 0,size=12),
-        axis.text.x = element_text(angle = 45, size = 12, colour = "black",  hjust = 1, face= "bold"),
-        axis.title.y = element_text(size = 12, face = "bold"),
-        legend.title = element_text(size = 16, face = "bold"),
-        axis.title.x = element_text(size = 12, face = "bold"),
-        legend.text = element_text(size = 12, face = "bold", colour = "black"),
-        axis.text.y = element_text(colour = "black", size = 12, face = "bold"),
-        plot.title = element_text(size=14,face="bold"),
-        panel.background = element_blank(),
-        panel.border =element_rect(fill = NA, color = "black"),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "black"))
-
-```
-
-
-<br>
-<br>
-<br>
-<br>
-<br>
-
-## ASVs length distribution for all samples
-
-<br>
-
-```{r all ASVs length distribution abundance, results='asis', echo=F}
-
-files <- list.files(path = snakemake@params[["length_distribution"]], pattern = "distribution", full.names =TRUE)
-
-
-for (f in files) {
-   cat(paste0("![](", f, "){width=1000%}\n"))
- }
-
-```
-
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-
-## Taxonomy profile
-
-<br>
-
-
-If no sample profile is displayed, try selecting different samples from the list. To view specific sample profiles in the Krona pl
-ot, you need to click on the samples listed on the left. You can also use 
-the search box at the top to find specific taxa. Additionally, the Krona plot provides options to adjust the taxonomy depth, font 
-size, and chart size to customize your view. Use the '+' and '-' buttons 
-next to each option to make these adjustments. If needed, you can also take a snapshot of your current view for reference or shari
-ng.
-
-<br>
-
-```{r krona-plot, echo=FALSE,message=F, warning=F}
-
-options(browser = "echo") #plot_krona is set to open the krona plot as a separate html file, this stops it
-
-# Plot Krona chart
-a <- plot_krona(physeq=ps, output=snakemake@params[['krona']], variable="samples", trim = TRUE)
-
-file=paste(snakemake@config[['path']],snakemake@config[['output_dir']], sep = "/")
-
-```
-
-<iframe src="`r paste0(file, "/QC_html_report/krona_Species_result.html")`" width="1100" height="700" scrolling="yes"></iframe>
-
 
 <div Class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
