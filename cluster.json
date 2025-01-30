@@ -31,7 +31,7 @@
   },
   "generateSeqtab" :
   {
-    "partition" : "cpu2023"،
+    "partition" : "cpu2023",
     "cpus-per-task" : 52,
     "mem" : "450G",
   },
