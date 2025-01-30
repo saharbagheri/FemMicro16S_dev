@@ -27,21 +27,13 @@ html_document:
 <br>
 
 ```{r needed packages,echo=F,include=F}
-
-suppressMessages(library(DT))
-suppressMessages(library(dplyr))
-suppressMessages(library(ggplot2))
-suppressMessages(library(psadd))
-suppressMessages(library(phyloseq))
-suppressMessages(library(dada2))
-suppressMessages(library(RColorBrewer))
 suppressMessages(library(limma))
 suppressMessages(library(tidyverse))
-suppressMessages(library(reshape2))
-suppressMessages(library(kableExtra))
-suppressMessages(library(waterfalls))
+suppressMessages(library(ggplot2))
 suppressMessages(library(ggpubr))
 suppressMessages(library(plotly))
+suppressMessages(library(waterfalls))
+suppressMessages(library(DT))
 suppressMessages(library(htmlwidgets))
 ```
 
