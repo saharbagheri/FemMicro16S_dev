@@ -75,7 +75,7 @@ rule primerRMVinvestigation:
         primer_status_bf=config["output_dir"]+"/primer_status/primer_existance_raw.csv",
         primer_status_af=config["output_dir"]+"/primer_status/primer_existance_trimmed.csv"
     conda:
-        "dada2"
+        "dada2_new"
     script:
         "../scripts/dada2/primer_investigation.R"
 
