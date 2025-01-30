@@ -6,7 +6,7 @@ rule plotQualityProfileRaw:
         R1=config["output_dir"]+"/figures/quality/rawFilterQualityPlots"+ config["forward_read_suffix"]+".png",
         R2=config["output_dir"]+"/figures/quality/rawFilterQualityPlots"+ config["reverse_read_suffix"]+".png"
     conda:
-        "dada2"
+        "dada2_new"
     script:
         "../scripts/dada2/plotQualityProfile.R"
 
@@ -20,7 +20,7 @@ rule plotQualityProfileAfterQC:
         R1=config["output_dir"]+"/figures/quality/afterQCQualityPlots"+ config["forward_read_suffix"]+".png",
         R2=config["output_dir"]+"/figures/quality/afterQCQualityPlots"+ config["reverse_read_suffix"]+".png"
     conda:
-        "dada2"
+        "dada2_new"
     script:
         "../scripts/dada2/plotQualityProfile.R"
 
@@ -42,7 +42,7 @@ rule dada2Filter:
     threads:
          config["threads"]
     conda:
-        "dada2"
+        "dada2_new"
     script:
         "../scripts/dada2/dada2_filter.R"
 
@@ -56,7 +56,7 @@ rule plotQualityProfileAfterdada2:
         R1=config["output_dir"]+"/figures/quality/afterdada2FilterQualityPlots"+ config["forward_read_suffix"]+".png",
         R2=config["output_dir"]+"/figures/quality/afterdada2FilterQualityPlots"+ config["reverse_read_suffix"]+".png"
     conda:
-        "dada2"
+        "dada2_new"
     script:
         "../scripts/dada2/plotQualityProfile.R"
 
@@ -75,7 +75,7 @@ rule read_subsampling:
         output_suff_r1=config["forward_read_suffix"]+"_subsampled"+ config["compression_suffix"],
         output_suff_r2=config["reverse_read_suffix"]+"_subsampled"+ config["compression_suffix"]
     conda:
-        "dada2"
+        "dada2_new"
     shell:
         """
         if [[ "{config[subsample]}" == "True" ]]; then
@@ -107,7 +107,7 @@ rule learnErrorRates:
     threads:
         config['threads']
     conda:
-        "dada2"
+        "dada2_new"
     script:
         "../scripts/dada2/learnErrorRates.R"
 
@@ -125,9 +125,9 @@ rule generateSeqtab:
     params:
         samples=SAMPLES
     threads:
-        config['threads']
+        config['generateSeqtab_threads']
     conda:
-        "dada2"
+        "dada2_new"
     script:
         "../scripts/dada2/generateSeqtab.R"
 
@@ -143,7 +143,7 @@ rule removeChimeras:
     threads:
         config['threads']
     conda:
-        "dada2"
+        "dada2_new"
     script:
         "../scripts/dada2/removeChimeras.R"
 
@@ -158,7 +158,7 @@ rule plotASVLength:
     threads:
         config["threads"]
     conda:
-        "dada2"
+        "dada2_new"
     script:
         "../scripts/dada2/asv_length_distribution_plotting.R"
 
@@ -173,8 +173,8 @@ rule RDPtaxa:
         taxonomy= config["output_dir"]+"/taxonomy/dada2_tables/{ref}_RDP.tsv",
         rds_bootstrap=config["output_dir"]+"/taxonomy/dada2_tables/{ref}_RDP_boostrap.rds"
     threads:
-        config['threads']
+        config['taxonomy_threads']
     conda:
-        "dada2"
+        "dada2_new"
     script:
         "../scripts/dada2/RDPtaxa.R"
