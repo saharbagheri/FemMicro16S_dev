@@ -23,11 +23,11 @@
   },
   "dada2Filter" :
   {
-    "cpus-per-task" : 20,
+    "cpus-per-task" : 25,
   },
   "learnErrorRates" :
   {
-    "cpus-per-task" : 20,
+    "cpus-per-task" : 25,
   },
   "generateSeqtab" :
   {
@@ -38,11 +38,11 @@
   },
   "removeChimeras" :
   {
-    "cpus-per-task" : 20,
+    "cpus-per-task" : 25,
   },
   "plotASVLength" :
   {
-    "cpus-per-task" : 20,
+    "cpus-per-task" : 25,
   },
   "RDPtaxa" :
   {
@@ -53,25 +53,35 @@
   },
   "cutAdapt" :
   {
-    "cpus-per-task" : 20,
+    "cpus-per-task" : 25,
   },
   "cutAdaptQc" :
   {
-    "cpus-per-task" : 20,
+    "cpus-per-task" : 25,
   },
   "vsearchGTDB" :
   {
-    "cpus-per-task" : 20,
+    "cpus-per-task" : 25,
   },
   "vsearchURE" :
   {
-    "cpus-per-task" : 20,
+    "cpus-per-task" : 25,
   },
   "vsearchParse" :
   {
-    "cpus-per-task" : 20,
+    "cpus-per-task" : 25,
   },
-  "qc_report" :
+  "qc_report1" :
+  {
+    "cpus-per-task" : 25,
+    "mem" : "200G",
+  },
+    "qc_report2" :
+  {
+    "cpus-per-task" : 25,
+    "mem" : "200G",
+  },
+    "qc_report3" :
   {
     "cpus-per-task" : 25,
     "mem" : "200G",
