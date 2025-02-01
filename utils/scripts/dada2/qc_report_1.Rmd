@@ -39,12 +39,13 @@ suppressMessages(library(htmlwidgets))
 
 
 ```{r needed files, echo=F}
-quality       <- params$quality
-out_dir       <- params$out_dir
-fwd_suffix    <- params$fwd_suffix
-rev_suffix    <- params$rev_suffix
+quality <- params$quality
+out_dir <- params$out_dir
+fwd_suffix <- params$fwd_suffix
+rev_suffix <- params$rev_suffix
 primer_removal<- params$primer_removal
-Nread         <- params$Nread
+primer_investigation <- params$primer_investigation
+Nread <- params$Nread
 
 
 
