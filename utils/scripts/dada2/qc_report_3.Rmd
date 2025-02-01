@@ -44,7 +44,7 @@ out_dir <-params$out_dir
 
 ```{r all ASVs length distribution abundance, results='asis', echo=F}
 
-files <- list.files(path = length_distribution, pattern = "distribution", full.names =TRUE)
+files <- list.files(path = length_dist, pattern = "distribution", full.names =TRUE)
 
 
 for (f in files) {
