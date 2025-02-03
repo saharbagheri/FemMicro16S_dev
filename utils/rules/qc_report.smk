@@ -43,7 +43,7 @@ rule qc_report2:
     params:
         path=config["path"],
         taxonomy=config["path"]+"/"+config["output_dir"]+"/taxonomy/dada2_tables/GTDB_RDP.tsv",
-        seqtab=config["path"]+"/"+config["output_dir"]+"/dada2/seqtab_nochimeras.csv",
+        seqtab=config["path"]+"/"+config["output_dir"]+"/dada2/seqtab_nochimeras.rds",
         source=config["path"]+"/utils/scripts/dada2/pos_ctrl_references.R",
         pos=config["Positive_samples"],
         ref=config["path"]+"/utils/databases/",
