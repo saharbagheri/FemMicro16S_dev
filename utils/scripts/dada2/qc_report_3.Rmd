@@ -21,7 +21,7 @@ params:
 
 
 
-{r needed packages,echo=F}
+```r needed packages,echo=F}
 suppressMessages(library(ggplot2))
 suppressMessages(library(psadd))
 suppressMessages(library(phyloseq))
