@@ -19,7 +19,7 @@ params:
 ---
 
 
-```{r needed packages,echo=F}
+```{r needed packages,echo=F, message=F,include=F}
 suppressMessages(library(phyloseq))
 suppressMessages(library(RColorBrewer))
 suppressMessages(library(stringr))
