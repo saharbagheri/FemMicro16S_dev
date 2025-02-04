@@ -26,7 +26,7 @@ html_document:
 <br>
 <br>
 
-```{r needed packages,echo=F,include=F}
+```{r needed packages, message=F,include=F, warning=F}
 suppressMessages(library(limma))
 suppressMessages(library(tidyverse))
 suppressMessages(library(ggplot2))
