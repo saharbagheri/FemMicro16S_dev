@@ -99,10 +99,8 @@ options(browser = "echo") #plot_krona is set to open the krona plot as a separat
 # Plot Krona chart
 a <- psadd::plot_krona(physeq=ps_genus, output=krona, variable="samples", trim = TRUE)
 
-file=paste(path,out_dir, sep = "/")
-
 ```
 
-<iframe src="`r paste0(file, "/QC_html_report/krona_Species_result.html")`" width="1100" height="700" scrolling="yes"></iframe>
+<iframe src="`r paste0(out_dir, "/QC_html_report/krona_Species_result.html")`" width="1100" height="700" scrolling="yes"></iframe>
 
 <div Class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
