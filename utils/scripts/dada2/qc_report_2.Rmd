@@ -54,16 +54,16 @@ source<- params$source
 ```{r, warning=F, message=F, results='asis',echo=F,fig.width=10, fig.height=7}
 
 #Read sequence data and taxonomy data
-seqtab <- data.frame(readRDS(seqtab)) 
+seqtabs <- data.frame(readRDS(seqtab)) 
 taxa <- read.table(taxonomy, header = TRUE, sep = "\t", check.names = FALSE)
 
 # Prepare the sample data
-data <- data.frame(samples = rownames(seqtab))
+data <- data.frame(samples = rownames(seqtabs))
 rownames(data) <- data$samples
 
 
 # Create a phyloseq object
-ps <- phyloseq(otu_table(as.matrix(seqtab), taxa_are_rows = FALSE),
+ps <- phyloseq(otu_table(as.matrix(seqtabs), taxa_are_rows = FALSE),
                sample_data(data),
                tax_table(as.matrix(taxa)))
 
@@ -190,10 +190,10 @@ prevalence, while points further to the right on the X-axis have higher sequence
 ```{r, investigating ASVs,echo=F,messages=FALSE, warning=FALSE,include=T}
 
 
-seqtab <- data.frame(read.csv(file = seqtab,row.names = 1))
+seqtabs <- data.frame(read.csv(file = seqtab,row.names = 1))
 
 # Calculate prevalence for each taxa
-Prevalence <- seqtab %>%
+Prevalence <- seqtabs %>%
   summarise_all(~sum(. > 0)) %>%    # Prevalence: Count of non-zero entries for each taxa
   t() %>%
   as.data.frame() %>%
@@ -202,7 +202,7 @@ Prevalence <- seqtab %>%
 colnames(Prevalence) <- c("Prevalence", "Taxa")
 
 # Calculate abundance for each taxa
-Abundance <- seqtab %>% 
+Abundance <- seqtabs %>% 
   t() %>%
   rowSums() %>%  
   as.data.frame() 
@@ -223,7 +223,7 @@ ggplot(df, aes(x = Abundance, y = Prevalence)) +
   scale_color_identity() +
   ggtitle("Overview of ASVs focusing on their prevalence and abundance")+
   labs(caption = paste0("Points in green represent ASVs with prevalence > 10 and abundance > 150.\n",
-  "Total number of ASVs is ", length(df$Taxa), " in ", nrow(seqtab) ," samples."))+
+  "Total number of ASVs is ", length(df$Taxa), " in ", nrow(seqtabs) ," samples."))+
   theme(plot.caption = element_text(hjust = 0,size=12),
         axis.text.x = element_text(angle = 45, size = 12, colour = "black",  hjust = 1, face= "bold"),
         axis.title.y = element_text(size = 12, face = "bold"),
