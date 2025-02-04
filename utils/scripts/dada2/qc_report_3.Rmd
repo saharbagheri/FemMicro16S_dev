@@ -77,16 +77,16 @@ ng.
 
 ```{r krona-plot, echo=FALSE,message=F, warning=F}
 #Read sequence data and taxonomy data
-seqtab <- data.frame(read.csv(file = seqtab,row.names = 1))
+seqtabs <- data.frame(readRDS(seqtab))
 taxa <- read.table(taxonomy, header = TRUE, sep = "\t", check.names = FALSE)
 
 # Prepare the sample data
-data <- data.frame(samples = rownames(seqtab))
+data <- data.frame(samples = rownames(seqtabs))
 rownames(data) <- data$samples
 
 
 # Create a phyloseq object
-ps <- phyloseq(otu_table(as.matrix(seqtab), taxa_are_rows = FALSE),
+ps <- phyloseq(otu_table(as.matrix(seqtabs), taxa_are_rows = FALSE),
                sample_data(data),
                tax_table(as.matrix(taxa)))
 
