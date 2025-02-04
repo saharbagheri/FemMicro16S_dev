@@ -73,7 +73,7 @@ rule qc_report3:
         path=config["path"],
         outdir=config["path"]+"/"+ config["output_dir"],
         taxonomy=config["path"]+"/"+config["output_dir"]+"/taxonomy/dada2_tables/GTDB_RDP.tsv",
-        seqtab=config["path"]+"/"+config["output_dir"]+"/dada2/seqtab_nochimeras.csv",
+        seqtab=config["path"]+"/"+config["output_dir"]+"/dada2/seqtab_nochimeras.rds",
         length_distribution=config["path"]+"/"+config["output_dir"]+"/figures/length_distribution/",        
         krona=config["path"]+"/"+config["output_dir"]+"/QC_html_report/"+"krona_Species_result"
     output:
