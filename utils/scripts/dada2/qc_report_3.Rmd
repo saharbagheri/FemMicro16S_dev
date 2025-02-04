@@ -92,6 +92,7 @@ ps <- phyloseq(otu_table(as.matrix(seqtabs), taxa_are_rows = FALSE),
 
 
 ps_genus<- tax_glom(ps, taxrank="Genus")
+ps_genus@tax_table<-ps_genus@tax_table[,1:6]
 
 options(browser = "echo") #plot_krona is set to open the krona plot as a separate html file, this stops it
 
