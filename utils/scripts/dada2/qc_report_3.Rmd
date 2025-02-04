@@ -61,7 +61,7 @@ for (f in files) {
 
 
 
-## Taxonomy profile
+## Taxonomy profile (Genus level)
 
 <br>
 
