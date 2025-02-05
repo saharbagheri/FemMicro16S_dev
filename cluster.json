@@ -74,19 +74,10 @@
   {
     "cpus-per-task" : 25,
   },
-  "qc_report1" :
+  "qc_report" :
   {
+    "partition" : "cpu2019","cpu2021","cpu2022",
     "cpus-per-task" : 25,
-    "mem" : "200G",
-  },
-    "qc_report2" :
-  {
-    "cpus-per-task" : 25,
-    "mem" : "200G",
-  },
-    "qc_report3" :
-  {
-    "cpus-per-task" : 25,
-    "mem" : "200G",
+    "mem" : "100G",
   }
 }
