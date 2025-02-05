@@ -11,6 +11,14 @@ params:
    primer_removal: ""
    primer_investigation: ""
    Nread: ""
+   seqtab: ""
+   taxonomy: ""
+   pos: ""
+   ref: ""
+   source: ""
+   krona: ""
+   path: ""
+   length_dist: ""
 output:
 html_document:
     theme: flatly
@@ -38,6 +46,25 @@ suppressMessages(library(htmlwidgets))
 ```
 
 
+```{r needed files,echo=F,include=F, message=F, warning=F}
+suppressMessages(library(DT))
+suppressMessages(library(dplyr))
+suppressMessages(library(ggplot2))
+suppressMessages(library(psadd))
+suppressMessages(library(phyloseq))
+suppressMessages(library(dada2))
+suppressMessages(library(RColorBrewer))
+suppressMessages(library(limma))
+suppressMessages(library(tidyverse))
+suppressMessages(library(reshape2))
+suppressMessages(library(kableExtra))
+suppressMessages(library(waterfalls))
+suppressMessages(library(ggpubr))
+suppressMessages(library(plotly))
+suppressMessages(library(htmlwidgets))
+
+```
+
 ```{r needed files, echo=F}
 quality <- params$quality
 out_dir <- params$out_dir
@@ -46,15 +73,14 @@ rev_suffix <- params$rev_suffix
 primer_removal<- params$primer_removal
 primer_investigation <- params$primer_investigation
 Nread <- params$Nread
-
-
-
-#print(paste("quality = ", quality, "\n"))
-#print(paste("out_dir = ", out_dir, "\n"))
-#print(paste("Forward reads file  = ", fwd_suffix, "\n"))
-#print(paste("Reverse reads file  = ", rev_suffix, "\n"))
-#print(paste("primer-removal  = ", primer_removal, "\n"))
-#print(paste("Nread file = ",Nread, "\n"))
+seqtab <- params$seqtab
+taxonomy <- params$taxonomy
+pos <- params$pos
+ref<-params$ref
+source<- params$source
+krona <- params$krona
+path<-params$path
+length_dist<-params$length_dist
 
 ```
 
@@ -66,14 +92,7 @@ Nread <- params$Nread
 
 <br>
 
-The overall read quality plots offer a comprehensive assessment of the sequencing run's data integrity, highlighting raw and proce
-ssed read quality. The plots display quality scores (Y-axis) against read positions (X-axis), showing a
-typical trend where quality decreases towards the end of the reads. The left panel represents forward reads quality and The right 
-panel illustrates reverse reads quality aggregated for all samples. In gray-scale is a heat map of the frequency of each quality
-score at each base position is shown. The mean quality score at each position is shown by the green line, and the quartiles of the
- quality score distribution by the orange lines. The red line shows the scaled proportion of reads that extend to at least that
-position (this is more useful for other sequencing technologies, as Illumina reads are typically all the same length, hence a flat
- red line will be expected).
+The overall read quality plots offer a comprehensive assessment of the sequencing run's data integrity, highlighting raw and processed read quality. The plots display quality scores (Y-axis) against read positions (X-axis), showing a typical trend where quality decreases towards the end of the reads. The left panel represents forward reads quality and The right panel illustrates reverse reads quality aggregated for all samples. In gray-scale is a heat map of the frequency of each quality score at each base position is shown. The mean quality score at each position is shown by the green line, and the quartiles of the quality score distribution by the orange lines. The red line shows the scaled proportion of reads that extend to at least that position (this is more useful for other sequencing technologies, as Illumina reads are typically all the same length, hence a flat red line will be expected).
 
 <br>
 
@@ -144,11 +163,11 @@ Read length distribution is shown in this plot for all reads in all samples afte
 
 <br>
 
-**You can use the range slider at the bottom of plot to zoom in or zoom out, hover over bars to know more about the reads length and count. Samples listed on the right panel can be excluded and included by clicking on them. Reads with counts less than 200 are 
-removed for improving the visualization.**
+**You can use the range slider at the bottom of plot to zoom in or zoom out, hover over bars to know more about the reads length and count. Samples listed on the right panel can be excluded and included by clicking on them. Reads with counts less than 200 are removed for improving the visualization.**
 
 <br>
 <br>
+
 
 ```{r plotly, echo=F,fig.width=10,fig.height=5}
 
@@ -442,11 +461,7 @@ reads<-read.csv(Nread,sep="\t")
 
 <br>
 
-This plot provides a step-by-step overview of the changes in read counts throughout the DADA2 pipeline for all samples. It illustr
-ates how many sequencing reads are discarded at each stage of the processing workflow, from the initial raw data to the
-final remained cleaned data. Each step, including quality trimming, filtering, denoising, merging, and chimera removal, is shown w
-ith the corresponding number of reads lost. The final bar indicates the total number of high-quality reads remaining after all
-processing steps.
+This plot provides a step-by-step overview of the changes in read counts throughout the DADA2 pipeline for all samples. It illustrates how many sequencing reads are discarded at each stage of the processing workflow, from the initial raw data to the final remained cleaned data. Each step, including quality trimming, filtering, denoising, merging, and chimera removal, is shown with the corresponding number of reads lost. The final bar indicates the total number of high-quality reads remaining after all processing steps.
 
 <br>
 
@@ -542,10 +557,7 @@ datatable(reads1,
 
 <br>
 
-This plot compares the distribution of read counts at the beginning and end of the data processing pipeline for all samples. The l
-eft panel shows the initial distribution of raw reads and the right panel illustrates the final distribution of clean reads
-after all the steps of trimming, filtering, denoising, merging, and chimera removal have been applied. Each bar represents the num
-ber of samples falling within specific read count ranges.
+This plot compares the distribution of read counts at the beginning and end of the data processing pipeline for all samples. The left panel shows the initial distribution of raw reads and the right panel illustrates the final distribution of clean reads after all the steps of trimming, filtering, denoising, merging, and chimera removal have been applied. Each bar represents the number of samples falling within specific read count ranges.
 
 <br>
 
@@ -617,5 +629,261 @@ coord_cartesian(ylim=c(0, max_count + 30))#+labs(caption="Binwidth is 5.")
 ggarrange(A,B)
 
 ```
+
+
+# **Investigating ASVs**
+
+<br>
+
+## Bacterial composition in the positive controls
+
+<br>
+
+
+```{r, warning=F, message=F, results='asis',echo=F,fig.width=10, fig.height=7,eval=T}
+
+#Read sequence data and taxonomy data
+seqtabs <- data.frame(readRDS(seqtab))
+taxa <- read.table(taxonomy, header = TRUE, sep = "\t", check.names = FALSE)
+
+# Prepare the sample data
+data <- data.frame(samples = rownames(seqtabs))
+rownames(data) <- data$samples
+
+
+# Create a phyloseq object
+ps <- phyloseq(otu_table(as.matrix(seqtabs), taxa_are_rows = FALSE),
+               sample_data(data),
+               tax_table(as.matrix(taxa)))
+
+
+
+# Prepare color palette
+n <- 74
+qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
+col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
+
+
+
+
+# List of positive control samples
+samples <- unlist(base::strsplit(pos, split = "\\|"))
+
+# Define known bacterial community counts for each reference file
+ref_files <- list.files(ref)
+names(ref_files)<-stringr::str_split_fixed(ref_files, "\\.", 2)[, 1]
+
+#read in community composition of reference files in alphabetic order
+source(source)
+
+if (length(samples) > 0 && !all(samples == "")) {
+  for (i in samples) {
+    mock <- prune_samples(ps@sam_data$samples == i, ps)
+    mock <- prune_taxa(colSums(mock@otu_table) > 0, mock)
+    
+    # Iterate over each reference file
+    for (j in names(ref_files)) {
+      mock.ref <- getSequences(paste0(ref,ref_files[[j]]))
+      unqs.mock <- mock@otu_table@.Data
+      
+      # Retrieve the expected bacterial community counts for the current reference file
+      expected_counts <- community_counts[[j]]
+      
+      match.ref <- as.data.frame(
+        sapply(colnames(unqs.mock), function(x) str_detect(mock.ref, fixed(x)))
+      )
+      
+      match.ref$species <- stringr::str_split_fixed(names(mock.ref), "_16", 2)[, 1]
+      
+      maps <- gather(data = match.ref, key = "seqs", value = "present", -species) %>%
+        dplyr::filter(present == TRUE)
+      
+      #sometimes there is overlap between positive control reference files bacterial composition so samples get matched with a reference when there is >60% similar bacterial composition
+      
+      if(nrow(maps)>0 && mean(unique(match.ref$species) %in% unique(maps$species))*100 > 60){
+        maps$abundance <- c(mock@otu_table[, maps$seqs])
+        
+        tot_abund<-maps %>% summarise(abundance=sum(abundance))
+        
+        temp=maps %>% dplyr::group_by(species) %>% dplyr::summarise("Observed"=round(100*(sum(abundance)/unlist(tot_abund)),digits = 1))
+        colnames(temp)[1]<-"Taxa"
+        
+        temp<-left_join(expected_counts,temp,by="Taxa") %>%
+          mutate(Observed = replace_na(Observed, 0))
+        
+        # Plotting
+        A <- ggplot(reshape2::melt(as.data.frame(temp)), aes(x = variable, y = value, fill = Taxa)) +
+          geom_bar(colour = "black", position = "stack", stat = "identity", width = 0.8) +
+          xlab(NULL) +
+          ggtitle(paste0("Bacterial profile in ", i)) +
+          theme(legend.position = "right",
+                axis.text.x = element_text(angle = 90, size = 15, colour = "black", vjust = 0.9, hjust = 0.83, face = "bold"),
+                axis.title.y = element_text(size = 15, face = "bold"),
+                axis.title.x = element_text(size = 15, face = "bold"),
+                legend.title = element_text(size = 12, face = "bold"),
+                legend.text = element_text(size = 12, face = "bold", colour = "black"),
+                axis.text.y = element_text(colour = "black", size = 13, face = "bold"),
+                plot.caption = element_text(hjust = 0, vjust = 0, size = 17, face = "bold", colour = "red"),
+                plot.title = element_text(size = 15, face = "bold"),
+                strip.text.x = element_text(size = 15, colour = "black")) +
+          ylab("Counts") +
+          scale_fill_manual(values = col_vector) +
+          theme(panel.background = element_blank(),
+                panel.border = element_rect(fill = NA, color = "black"),
+                panel.grid.major = element_blank(),
+                panel.grid.minor = element_blank(),
+                axis.line = element_line(colour = "black"))+guides(fill=guide_legend(nrow=21,byrow=F))
+        print(A)
+        
+        cat("<br><br>")
+        
+        B <- kable(temp, format = "html", caption = "Relative abundance table of taxa found in the positive control sample") %>%
+          kable_styling() %>%
+          column_spec(1:ncol(temp), width = "6cm")
+        print(B)
+        
+        cat("<br><br>")
+        cat("<br><br>")
+        cat("<br><br>")
+        cat("<br><br>")
+        
+      }
+    }
+  }
+  
+} else {
+  cat("There was no positive control in this run")
+  cat("<br><br>")
+  cat("<br><br>")
+  cat("<br><br>")
+  cat("<br><br>")
+  
+}
+
+```
+
+
+## ASVs prevalence and Abundance
+
+<br>
+This graph depicts the prevalence and abundance of Amplicon Sequence Variants (ASVs) across multiple samples. The X-axis represents the abundance of each ASV, which is the total count of sequences assigned to that ASV. The Y-axis represents the prevalence of each ASV, indicating the number of samples in which the ASV is found. Each point on the graph represents a single ASV, with its position determined by its abundance and prevalence. Points higher on the Y-axis are found in more samples, indicating higher prevalence, while points further to the right on the X-axis have higher sequence counts, indicating higher abundance.
+
+<br>
+
+
+```{r, investigating ASVs,echo=F,messages=FALSE, warning=FALSE,include=T,eval=T}
+
+seqtabs <- data.frame(readRDS(seqtab))
+
+# Calculate prevalence for each taxa
+Prevalence <- seqtabs %>%
+  summarise_all(~sum(. > 0)) %>%    # Prevalence: Count of non-zero entries for each taxa
+  t() %>%
+  as.data.frame() %>%
+  mutate(Taxa = rownames(.))
+
+colnames(Prevalence) <- c("Prevalence", "Taxa")
+
+# Calculate abundance for each taxa
+Abundance <- seqtabs %>% 
+  t() %>%
+  rowSums() %>%  
+  as.data.frame() 
+
+Abundance$Taxa <- rownames(Abundance)
+
+colnames(Abundance) <- c("Abundance", "Taxa")
+
+# Joining prevalence and abundance
+df <- left_join(Prevalence, Abundance, by = "Taxa")
+
+# Melting the data for boxplot visualization
+df1 <- reshape2::melt(df, id.vars = "Taxa", value.name = "count")
+
+# Scatter plot
+ggplot(df, aes(x = Abundance, y = Prevalence)) +
+  geom_point(aes(color = ifelse(Prevalence > 10 & Abundance > 150, "#77c593", "black"))) +
+  scale_color_identity() +
+  ggtitle("Overview of ASVs focusing on their prevalence and abundance")+
+  labs(caption = paste0("Points in green represent ASVs with prevalence > 10 and abundance > 150.\n",
+  "Total number of ASVs is ", length(df$Taxa), " in ", nrow(seqtabs) ," samples."))+
+  theme(plot.caption = element_text(hjust = 0,size=12),
+        axis.text.x = element_text(angle = 45, size = 12, colour = "black",  hjust = 1, face= "bold"),
+        axis.title.y = element_text(size = 12, face = "bold"),
+        legend.title = element_text(size = 16, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold"),
+        legend.text = element_text(size = 12, face = "bold", colour = "black"),
+        axis.text.y = element_text(colour = "black", size = 12, face = "bold"),
+        plot.title = element_text(size=14,face="bold"),
+        panel.background = element_blank(),
+        panel.border =element_rect(fill = NA, color = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black"))
+
+```
+
+
+
+## ASVs length distribution for all samples
+
+<br>
+
+```{r all ASVs length distribution abundance, results='asis', echo=F}
+
+files <- list.files(path = length_dist, pattern = "distribution", full.names =TRUE)
+
+
+for (f in files) {
+   cat(paste0("![](", f, "){width=1000%}\n"))
+ }
+
+```
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+
+## Taxonomy profile
+
+<br>
+
+
+If no sample profile is displayed, try selecting different samples from the list. To view specific sample profiles in the Krona plot, you need to click on the samples listed on the left. You can also use the search box at the top to find specific taxa. Additionally, the Krona plot provides options to adjust the taxonomy depth, font size, and chart size to customize your view. Use the '+' and '-' buttons next to each option to make these adjustments. If needed, you can also take a snapshot of your current view for reference or sharing.
+
+<br>
+
+```{r krona-plot, echo=FALSE,message=F, warning=F}
+#Read sequence data and taxonomy data
+seqtabs <- data.frame(readRDS(seqtab))
+taxa <- read.table(taxonomy, header = TRUE, sep = "\t", check.names = FALSE)
+
+# Prepare the sample data
+data <- data.frame(samples = rownames(seqtabs))
+rownames(data) <- data$samples
+
+
+# Create a phyloseq object
+ps <- phyloseq(otu_table(as.matrix(seqtabs), taxa_are_rows = FALSE),
+               sample_data(data),
+               tax_table(as.matrix(taxa)))
+
+
+ps_genus<- tax_glom(ps, taxrank="Genus")
+ps_genus@tax_table<-ps_genus@tax_table[,1:6]
+
+
+options(browser = "echo") #plot_krona is set to open the krona plot as a separate html file, this stops it
+
+# Plot Krona chart
+a <- psadd::plot_krona(physeq=ps_genus, output=krona, variable="samples", trim = TRUE)
+
+```
+
+<iframe src="`r paste0(out_dir, "/QC_html_report/krona_Species_result.html")`" width="1100" height="700" scrolling="yes"></iframe>
 
 <div Class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
