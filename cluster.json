@@ -24,6 +24,7 @@
   "dada2Filter" :
   {
     "cpus-per-task" : 25,
+    "mem" : "50G",
   },
   "learnErrorRates" :
   {
