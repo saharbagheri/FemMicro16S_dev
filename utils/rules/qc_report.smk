@@ -90,15 +90,7 @@ rule qc_report_final:
     input:
         rules.qc_report1.output,
         rules.qc_report2.output,
-        rules.qc_report3.output,
-        rules.combineReadCounts.output,
-        rules.plotASVLength.output,
-        rules.plotQualityProfileAfterdada2.output,
-        rules.plotQualityProfileRaw.output,
-        rules.plotQualityProfileAfterQC.output,
-        rules.separate_vsearch_hits.output,
-        rules.vsearchParse.output,
-        rules.combining_annotations.output
+        rules.qc_report3.output
     conda:
         "rmd"
     output:
