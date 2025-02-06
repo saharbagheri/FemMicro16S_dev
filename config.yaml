@@ -19,8 +19,8 @@ output_dir: "output"
 path: "/home/analysis/FemMicro16S"
 
 # Reads format
-forward_read_suffix: "_R1"
-reverse_read_suffix: "_R2"
+forward_read_suffix: "_R1_001"
+reverse_read_suffix: "_R2_001"
 
 # Reads compressed/decompressed
 compression_suffix: ".fastq.gz"     #".fastq.gz" or ".fastq"
@@ -28,7 +28,7 @@ compression_suffix: ".fastq.gz"     #".fastq.gz" or ".fastq"
 ##Default is FALSE. If TRUE, multithreading is enabled and the number of available threads is automatically determined.
 #If an integer is provided, the number of threads to use is set. Please make sure these numbers with cluster.json numbers match.
 threads: 25  #General rules
-generateSeqtab_threads: 52  #Specific rule
+generateSeqtab_threads: 20  #Specific rule
 taxonomy_threads: 40  #Specific rule
 
 #**************
