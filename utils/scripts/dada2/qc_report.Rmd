@@ -34,17 +34,6 @@ html_document:
 <br>
 <br>
 
-```{r needed packages, message=F,include=F, warning=F}
-suppressMessages(library(limma))
-suppressMessages(library(tidyverse))
-suppressMessages(library(ggplot2))
-suppressMessages(library(ggpubr))
-suppressMessages(library(plotly))
-suppressMessages(library(waterfalls))
-suppressMessages(library(DT))
-suppressMessages(library(htmlwidgets))
-```
-
 
 ```{r needed files,echo=F,include=F, message=F, warning=F}
 suppressMessages(library(DT))
