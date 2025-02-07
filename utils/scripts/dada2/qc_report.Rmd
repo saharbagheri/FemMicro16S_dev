@@ -35,7 +35,7 @@ html_document:
 <br>
 
 
-```{r needed files,echo=F,include=F, message=F, warning=F}
+```{r needed packages,echo=F,include=F, message=F, warning=F}
 suppressMessages(library(DT))
 suppressMessages(library(dplyr))
 suppressMessages(library(ggplot2))
