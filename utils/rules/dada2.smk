@@ -115,8 +115,8 @@ rule learnErrorRates:
 
 rule process_sample:
     input:
-        R1= rules.dada2Filter.output.R1,
-        R2= rules.dada2Filter.output.R2,
+        R1= config["output_dir"]+"/dada2/dada2_filter/{sample}" + config["forward_read_suffix"] + config["compression_suffix"],
+        R2= config["output_dir"]+"/dada2/dada2_filter/{sample}" + config["reverse_read_suffix"] + config["compression_suffix"],
         errR1= rules.learnErrorRates.output.errR1,
         errR2= rules.learnErrorRates.output.errR2
     output:
