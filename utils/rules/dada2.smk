@@ -134,8 +134,8 @@ rule process_sample:
 rule merge_seqtabs:
     input:
         # This expands to a list of per-sample RDS files using the SAMPLES list.
-        seqtabs = expand(config["output_dir"] + "/dada2/seqtab_{sample}.rds",sample=SAMPLES),
-        ddFs = expand(config["output_dir"] + "/dada2/ddFs_{sample}.rds",sample=SAMPLES)
+        seqtabs = expand(config["output_dir"] + "/dada2/intermediate_files/seqtab_{sample}.rds",sample=SAMPLES),
+        ddFs = expand(config["output_dir"] + "/dada2/intermediate_files/ddFs_{sample}.rds",sample=SAMPLES)
     output:
         seqtab = config["output_dir"] + "/dada2/seqtab_with_chimeras.rds",
         nreads = config["output_dir"] + "/dada2/Nreads_with_chimeras.txt"
