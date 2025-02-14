@@ -113,29 +113,44 @@ rule learnErrorRates:
 
 
 
-rule generateSeqtab:
+rule process_sample:
     input:
         R1= rules.dada2Filter.output.R1,
         R2= rules.dada2Filter.output.R2,
         errR1= rules.learnErrorRates.output.errR1,
         errR2= rules.learnErrorRates.output.errR2
     output:
-        seqtab= temp(config["output_dir"]+"/dada2/seqtab_with_chimeras.rds"),
-        nreads= temp(config["output_dir"]+"/dada2/Nreads_with_chimeras.txt")
-    params:
-        samples=SAMPLES
+        # One output RDS file per sample that will store the denoising results.
+        rds = config["output_dir"]+"/dada2/intermediate_files/seqtab_{sample}.rds",
+        ddFs = config["output_dir"] + "/dada2/intermediate_files/ddFs_{sample}.rds"
     threads:
-        config['generateSeqtab_threads']
+        config["generateSeqtab_threads"]
     conda:
         "dada2_new"
     script:
-        "../scripts/dada2/generateSeqtab.R"
+        "../scripts/dada2/process_sample.R"
+
+
+rule merge_seqtabs:
+    input:
+        # This expands to a list of per-sample RDS files using the SAMPLES list.
+        seqtabs = expand(config["output_dir"] + "/dada2/seqtab_{sample}.rds",sample=SAMPLES),
+        ddFs = expand(config["output_dir"] + "/dada2/ddFs_{sample}.rds",sample=SAMPLES)
+    output:
+        seqtab = config["output_dir"] + "/dada2/seqtab_with_chimeras.rds",
+        nreads = config["output_dir"] + "/dada2/Nreads_with_chimeras.txt"
+    conda:
+        "dada2_new"
+    params:
+        sample=SAMPLES
+    script:
+        "../scripts/dada2/merge_seqtabs.R"
 
 
 
 rule removeChimeras:
     input:
-        seqtab= rules.generateSeqtab.output.seqtab
+        seqtab= rules.merge_seqtabs.output.seqtab
     output:
         rds= config["output_dir"]+"/dada2/seqtab_nochimeras.rds",
         csv= config["output_dir"]+"/dada2/seqtab_nochimeras.csv",
