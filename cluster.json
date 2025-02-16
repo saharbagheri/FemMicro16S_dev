@@ -47,7 +47,7 @@
   {
     "partition" : "synergy","cpu2019","cpu2021","cpu2022",
     "cpus-per-task" : 20,
-    "mem" : "200G",
+    "mem" : "180G",
   },
   "cutAdapt" :
   {
