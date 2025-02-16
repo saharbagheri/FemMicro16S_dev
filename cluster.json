@@ -45,10 +45,9 @@
   },
   "RDPtaxa" :
   {
-    "partition" : "cpu2019","cpu2021","cpu2022","cpu2023", "bigmem",
-    "cpus-per-task" : 40,
-    "mem" : "180G",
-    "time" : "1-00:00:00",
+    "partition" : "synergy","cpu2019","cpu2021","cpu2022",
+    "cpus-per-task" : 20,
+    "mem" : "200G",
   },
   "cutAdapt" :
   {
