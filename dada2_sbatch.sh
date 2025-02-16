@@ -11,7 +11,7 @@
 
 log_dir="$(pwd)"
 log_file="logs/dada2-analysis.log.txt"
-num_jobs=60
+num_jobs=30
 
 echo "started at: `date`"
 
