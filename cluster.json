@@ -45,9 +45,8 @@
   },
   "RDPtaxa" :
   {
-    "partition" : "synergy","cpu2022",
-    "cpus-per-task" : 27,
-    "mem" : "240G",
+    "cpus-per-task" : 20,
+    "mem" : "200G",
   },
   "cutAdapt" :
   {
