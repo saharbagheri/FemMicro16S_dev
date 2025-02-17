@@ -29,7 +29,7 @@ compression_suffix: ".fastq.gz"     #".fastq.gz" or ".fastq"
 #If an integer is provided, the number of threads to use is set. Please make sure these numbers with cluster.json numbers match.
 threads: 25  #General rules
 generateSeqtab_threads: 26  #Specific rule
-taxonomy_threads: 27  #Specific rule
+taxonomy_threads: 20  #Specific rule
 
 #**************
 #***** QC *****
