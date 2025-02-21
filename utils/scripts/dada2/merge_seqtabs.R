@@ -1,23 +1,19 @@
 #!/usr/bin/env Rscript
 suppressMessages(library(dada2))
 
-# Load the per-sample results (each a list containing 'ddF' and 'merger')
-mergers <- lapply(snakemake@input[["seqtabs"]], readRDS)
+# Load the per-sample results
+ddF=lapply(snakemake@input[["ddF"]], readRDS)
+ddR=lapply(snakemake@input[["ddR"]], readRDS)
+derepF=lapply(snakemake@input[["derepF"]], readRDS)
+derepR=lapply(snakemake@input[["derepR"]], readRDS)
 
-names(mergers) <- sapply(mergers, function(mat) rownames(mat)[1])
 
+names(ddF)<-gsub("ddF_","",sub("\\.rds$", "",basename(snakemake@input[["ddF"]]), ignore.case = TRUE))
+names(ddR)<-sub("\\.rds$", "",basename(snakemake@input[["ddR"]]), ignore.case = TRUE)
+names(derepF)<-sub("\\.rds$", "",basename(snakemake@input[["derepF"]]), ignore.case = TRUE)
+names(derepR)<-sub("\\.rds$", "",basename(snakemake@input[["derepR"]]), ignore.case = TRUE)
 
-# Extract ddF objects (for tracking read counts)
-#dadaFs <- lapply(snakemake@input[["ddFs"]], readRDS)
-
-dadaFs <- lapply(snakemake@input[["ddFs"]], function(f) {
-  obj <- readRDS(f)
-  obj[[1]]
-})
-
-print(rownames(dadaFs[[1]]))
-print(rownames(dadaFs[[2]]))
-
+mergers <- mergePairs(ddF, derepF, ddR, derepR)
 
 # Build the final sequence table from all samples
 seqtab.all <- makeSequenceTable(mergers)
@@ -30,7 +26,7 @@ getNreads <- function(x) sum(getUniques(x))
 
 
 # Create a tracking matrix (rows for samples; columns for "denoised" and "merged")
-track <- cbind(sapply(dadaFs, getNreads), sapply(mergers, getNreads))
+track <- cbind(sapply(ddF, getNreads), sapply(mergers, getNreads))
 colnames(track) <- c("denoised", "merged")
 
 # Write the tracking info to a file
