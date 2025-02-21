@@ -72,7 +72,6 @@ min_len: 50
 #Example "Zymostandard_S266_L001|Zymostandard_S258_L001"
 
 Positive_samples: ""
-Negative_samples: ""
 
 
 #***************
@@ -106,6 +105,10 @@ nRecords: 100000
 
 #Default 1e8. The minimum number of total bases to use for error rate learning.
 learn_nbases: 500000000
+
+#Negative control samples to be excluded for the learning error rates step, write down sample names with | delimiter in between
+#Example "NTC_S221_L001|Lib_neg_S222_L001"
+Negative_samples: ""
 
 
 #If "consensus": The samples in a sequence table are independently checked for bimeras, and a consensus decision on each sequence variant is made.
