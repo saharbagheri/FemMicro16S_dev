@@ -24,6 +24,8 @@ names(filtF) <- sam
 names(filtR) <- sam
 
 # Dereplicate and run DADA2 on the forward and reverse reads
+set.seed(100)
+
 derepF <- derepFastq(filtF)
 ddF <- dada(derepF, err = errF, multithread = snakemake@threads)
 
@@ -32,14 +34,7 @@ dadaFs[[sam]] <- ddF
 derepR <- derepFastq(filtR)
 ddR <- dada(derepR, err = errR, multithread = snakemake@threads)
 
-
-# Merge paired reads for this sample
-merger <- mergePairs(ddF, derepF, ddR, derepR)
-mergers[[sam]] <- merger
-
-
-# Create the sequence table; the rownames will be your sample names
-result <- makeSequenceTable(mergers)
-
-saveRDS(result, snakemake@output[["rds"]])
-saveRDS(dadaFs, snakemake@output[["ddFs"]])
+saveRDS(ddF, snakemake@output[["ddF"]])
+saveRDS(ddR, snakemake@output[["ddR"]])
+saveRDS(derepF, snakemake@output[["derepF"]])
+saveRDS(derepR, snakemake@output[["derepR"]])
