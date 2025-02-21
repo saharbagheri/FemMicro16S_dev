@@ -2,7 +2,10 @@
 
 echo "started at: `date`"
 
-file="/bulk/IMCshared_bulk/sbagheri/NextSeq_run_improvement/whole_pipeline_all_samples_test2/logs/dada2-analysis.log.txt"
+log_dir="$(pwd)"
+log_file="logs/dada2-analysis.log.txt"
+
+file=$log_dir/$log_file
 
 echo "FILE: '$file'"
 
