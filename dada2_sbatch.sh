@@ -21,6 +21,9 @@ snakemake --unlock
 
 snakemake --rerun-triggers mtime --latency-wait 60 --rerun-incomplete  --cluster-config cluster.json --cluster 'sbatch --partition={cluster.partition} --cpus-per-task={cluster.cpus-per-task} --nodes={cluster.nodes} --ntasks={cluster.ntasks} --time={cluster.time} --mem={cluster.mem} --output={cluster.output} --error={cluster.error}' --jobs $num_jobs --use-conda &>> $log_dir/$log_file
 
+bash Version_check.sh > used_tools_versions.txt
+bash check_jobs.sh 
+
 output_dir=$(grep "output_dir" < config.yaml | cut -d ' ' -f2 | sed 's/"//g')
 list_files=$(grep "sampletable" < config.yaml | cut -d ' ' -f2 | sed 's/"//g')
 
@@ -35,9 +38,9 @@ cp cluster.json $snakemake_file_dir
 cp dada2_sbatch.sh $snakemake_file_dir 
 cp -rf logs $snakemake_file_dir
 cp -rf utils $snakemake_file_dir
+cp used_tools_versions.txt $snakemake_file_dir
+cp jobIDs_info.txt $snakemake_file_dir
 
-bash Version_check.sh > used_tools_versions.txt
-bash check_jobs.sh 
 
 echo "Finished at: `date`"
 
