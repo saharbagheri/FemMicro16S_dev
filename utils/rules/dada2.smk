@@ -120,9 +120,10 @@ rule process_sample:
         errR1= rules.learnErrorRates.output.errR1,
         errR2= rules.learnErrorRates.output.errR2
     output:
-        # One output RDS file per sample that will store the denoising results.
-        rds = config["output_dir"]+"/dada2/intermediate_files/seqtab_{sample}.rds",
-        ddFs = config["output_dir"] + "/dada2/intermediate_files/ddFs_{sample}.rds"
+        ddF = config["output_dir"]+"/dada2/intermediate_files/ddF_{sample}.rds",
+        ddR = config["output_dir"]+"/dada2/intermediate_files/ddR_{sample}.rds",
+        derepF = config["output_dir"] + "/dada2/intermediate_files/derepF_{sample}.rds",
+        derepR = config["output_dir"] + "/dada2/intermediate_files/derepR_{sample}.rds"
     threads:
         config["generateSeqtab_threads"]
     conda:
@@ -134,8 +135,10 @@ rule process_sample:
 rule merge_seqtabs:
     input:
         # This expands to a list of per-sample RDS files using the SAMPLES list.
-        seqtabs = expand(config["output_dir"] + "/dada2/intermediate_files/seqtab_{sample}.rds",sample=SAMPLES),
-        ddFs = expand(config["output_dir"] + "/dada2/intermediate_files/ddFs_{sample}.rds",sample=SAMPLES)
+        ddF = expand(config["output_dir"]+"/dada2/intermediate_files/ddF_{sample}.rds",sample=SAMPLES),
+        ddR = expand(config["output_dir"]+"/dada2/intermediate_files/ddR_{sample}.rds",sample=SAMPLES),
+        derepF = expand(config["output_dir"] + "/dada2/intermediate_files/derepF_{sample}.rds",sample=SAMPLES),
+        derepR = expand(config["output_dir"] + "/dada2/intermediate_files/derepR_{sample}.rds", sample=SAMPLES)
     output:
         seqtab = config["output_dir"] + "/dada2/seqtab_with_chimeras.rds",
         nreads = config["output_dir"] + "/dada2/Nreads_with_chimeras.txt"
