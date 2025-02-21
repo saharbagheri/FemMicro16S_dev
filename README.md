@@ -288,14 +288,15 @@ python utils/scripts/common/prepare.py <DIR>
 | max_e | maximum error rate allowed in primer match/detection | 0.1 |
 | qf, qr | quality trimming score | numeric e.g. 20 |
 | min_len | minimum length of reads kept | numeric e.g. 50 |
-| Positive_samples | Positive control samples to visualize in qc report | "pos_ctrl_1\\|pos_ctrl_2" |
+| Positive_samples | positive control samples to visualize in qc report | "pos_ctrl_1\\|pos_ctrl_2" |
 | threads | number of threads to be used | numeric e.g. 20 |
 | truncLen | trimming reads at this length | numeric e.g. 260, separately set for forward and reverse reads |
 | maxEE | After truncation, reads with higher than maxEE "expected errors" will be discarded. Expected errors are calculated from the nominal definition of the quality score: EE= sum(10^(-Q/10)) | numeric e.g. 2, separately set for forward and reverse reads  |
 | truncQ | Truncating reads at the first instance of a quality score less than or equal to truncQ | 2 |
-| subsample | Subsampling reads for learning error rates | False |
-| subsample2LearnErrorRate | Percentage of reads from each sample to be used | 0.25 |
-| learn_nbases | minimum number of total bases to use for error rate learning | 100000000 |
+| subsample | Subsampling reads for learning error rates | True |
+| subsample2LearnErrorRate | Percentage of reads from each sample to be used | 0.2 |
+| learn_nbases | minimum number of total bases to use for error rate learning | 500000000 |
+| Negative_samples | samples to be excluded for the learning error rates step | "NTC_S221_L001\\|Lib_neg_S222_L001" |
 | chimera_method | method used for chimera detection | consensus |
 | Identity | minimum percent identity for a hit to be considered a match | percentage e.g. 0.993 |
 | Maxaccepts | maximum number of hits to consider per query | numeric e.g. 30 |
