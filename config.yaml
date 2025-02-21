@@ -72,7 +72,7 @@ min_len: 50
 #Example "Zymostandard_S266_L001|Zymostandard_S258_L001"
 
 Positive_samples: ""
-
+Negative_samples: ""
 
 
 #***************
