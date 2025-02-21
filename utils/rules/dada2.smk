@@ -108,6 +108,8 @@ rule learnErrorRates:
         config['threads']
     conda:
         "dada2_new"
+    params:
+        neg=config["Negative_samples"]
     script:
         "../scripts/dada2/learnErrorRates.R"
 
