@@ -13,8 +13,8 @@ message("Number of sample listed as negative: ", length(neg_samples))
 
 #Reading in negative samples to exclude them from the list of samples
 if (length(neg_samples) > 0) {
-  R1_files <- R1[!(basename(R1) %notin% neg_samples)]
-  R2_files <- R2[!(basename(R2) %notin% neg_samples)]
+  R1_files <- R1[(basename(R1) %notin% neg_samples)]
+  R2_files <- R2[(basename(R2) %notin% neg_samples)]
   message("Number of samples after excluding negative samples: ", length(R2_files))
 } else {
   R1_files <- R1
