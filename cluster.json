@@ -74,7 +74,6 @@
   },
   "qc_report" :
   {
-    "partition" : "cpu2019","cpu2021","cpu2022",
     "cpus-per-task" : 25,
     "mem" : "100G",
   }
