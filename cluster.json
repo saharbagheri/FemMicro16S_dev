@@ -35,6 +35,10 @@
     "cpus-per-task" : 26,
     "mem" : "234G",
   },
+    "merge_seqtabs" :
+  {
+    "mem" : "60G",
+  },
   "removeChimeras" :
   {
     "cpus-per-task" : 25,
