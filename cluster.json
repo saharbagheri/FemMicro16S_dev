@@ -37,7 +37,7 @@
   },
     "merge_seqtabs" :
   {
-    "mem" : "60G",
+    "mem" : "90G",
   },
   "removeChimeras" :
   {
