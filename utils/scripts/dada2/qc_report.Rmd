@@ -458,11 +458,11 @@ This plot provides a step-by-step overview of the changes in read counts through
 ```{r table merge,echo=F,messages=FALSE, warning=FALSE,include=T,fig.width=11,fig.height=7}
 reads1<-reads
 
-reads1 <- reads1 %>%
-  filter(!grepl("Undetermined", file))
-
-
 colnames(reads1)[1:7]<-c("Sample", "Raw", "not-Quality_Trimmed", "not-Filtered", "Denoised", "Merged","Cleaned")
+
+
+reads1 <- reads1 %>%
+  filter(!grepl("Undetermined", Sample))
 
 reads1 <- reads1 %>% mutate_all(~ifelse(is.na(.), 0, .))
 
