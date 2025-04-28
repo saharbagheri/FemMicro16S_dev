@@ -20,6 +20,10 @@ if (length(neg_samples) > 0) {
   message("No negative samples were provided.")
 }
 
+print("Order of samples read in before learning error rates")
+print(snakemake@input[['R1_files']])
+print(snakemake@input[['R2_files']])
+
 
 errF <- learnErrors(R1_files, nbases=snakemake@config[["learn_nbases"]], multithread=snakemake@threads)
 errR <- learnErrors(R2_files, nbases=snakemake@config[["learn_nbases"]], multithread=snakemake@threads)
