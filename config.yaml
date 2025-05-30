@@ -43,10 +43,10 @@ primer_removal: False  #True or False
 primer_investigation: False #True or False
 
 primers:
-fwd_primer: ""
-rev_primer: ""
-fwd_primer_rc: ""
-rev_primer_rc: ""
+fwd_primer: "^PRIMER"
+rev_primer: "^PRIMER"
+fwd_primer_rc: "PRIMER$"
+rev_primer_rc: "PRIMER$"
 
 ## Primer detection parameters
 # minimum overlap length for primer removal
