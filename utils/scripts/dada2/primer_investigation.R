@@ -23,6 +23,8 @@ fnRs.cut <- snakemake@input[['cut2']]
 FWD <- snakemake@config[["fwd_primer"]]
 REV <- snakemake@config[["rev_primer"]]
 
+FWD <- gsub("\\^", "", FWD)
+REV <- gsub("\\^", "", REV)
 
 fwd_pattern <- paste0(snakemake@config[["forward_read_suffix"]],snakemake@config[["compression_suffix"]])
 rev_pattern <- paste0(snakemake@config[["reverse_read_suffix"]],snakemake@config[["compression_suffix"]])
