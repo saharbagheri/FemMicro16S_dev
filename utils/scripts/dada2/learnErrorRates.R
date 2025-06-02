@@ -15,15 +15,15 @@ if (length(neg_samples) > 0) {
   R2_files <- R2[!(sub("_R.*", "", sub(".*/", "", R2)) %in% neg_samples)]
   message("Number of samples after excluding negative samples: ", length(R2_files))
   print("Order of samples read in before learning error rates")
-  print(snakemake@input[['R1_files']])
-  print(snakemake@input[['R2_files']])  
+  print(R1_files)
+  print(R2_files)  
 } else {
   R1_files <- R1
   R2_files <- R2
   message("No negative samples were provided.")
   print("Order of samples read in before learning error rates")
-  print(snakemake@input[['R1_files']])
-  print(snakemake@input[['R2_files']])
+  print(R1_files)
+  print(R2_files)
 }
 
 print("Order of samples read in before learning error rates")
