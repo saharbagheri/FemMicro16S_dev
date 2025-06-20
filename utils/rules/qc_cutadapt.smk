@@ -50,8 +50,8 @@ rule cutAdapt:
     shell:
         """
         if [[ "{config[primer_removal]}" == "True" ]]; then
-            cutadapt -m {params.m} -O {params.o} -e {params.e} --discard-untrimmed \
-                -g {config[fwd_primer]} -G {config[rev_primer]} -a  {config[rev_primer_rc]} -A {config[fwd_primer_rc]} \
+            cutadapt -m {params.m} -O {params.o} -e {params.e} --discard-untrimmed --revcomp \
+                -g {config[fwd_primer]} -G {config[rev_primer]} \
                 -o {output.R1} -p {output.R2} \
                 {input.R1} {input.R2}
         else
