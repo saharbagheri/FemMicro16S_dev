@@ -53,14 +53,13 @@ rev_primer: "PRIMER"
 min_overlap: 15
 
 # maximum error rate for primer removal
-max_e: 0.1
+max_e: 0.15
 
 ## CutAdapt parameters for quality trimming
-qf: 20
-qr: 20
+nextseqTrim: 20
 
 ## minimum length of reads
-min_len: 50
+min_len: 60:60
 
 
 
