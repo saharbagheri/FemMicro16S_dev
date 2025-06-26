@@ -30,7 +30,8 @@ conda deactivate
 
 
 #Packages in dada2 env
-conda activate dada2
+conda activate dada2_new
+
 echo "dada2 version from dada2 environment:" && Rscript -e "packageVersion('dada2')" && echo -e "\n"
 echo "gridExtra version from dada2 environment:" && Rscript -e "packageVersion('gridExtra')" && echo -e "\n"
 echo "ggplot2 version from dada2 environment:" && Rscript -e "packageVersion('ggplot2')" && echo -e "\n"
