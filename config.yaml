@@ -59,7 +59,7 @@ max_e: 0.15
 nextseqTrim: 20
 
 ## minimum length of reads
-min_len: 60:60
+min_len: 60
 
 
 
