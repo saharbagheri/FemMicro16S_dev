@@ -53,7 +53,7 @@ rev_primer: "PRIMER"
 min_overlap: 15
 
 # maximum error rate for primer removal
-max_e: 0.15
+max_e: 0.1
 
 ## CutAdapt parameters for quality trimming
 nextseqTrim: 20
