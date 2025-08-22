@@ -5,7 +5,7 @@ seqtab.all= readRDS(snakemake@input[['seqtab']]) # seqtab.all
 
 
 # Remove chimeras
-seqtab <- removeBimeraDenovo(seqtab.all, method=snakemake@config[['chimera_method']], multithread=snakemake@threads)
+seqtab <- removeBimeraDenovo(seqtab.all, method=snakemake@config[['chimera_method']], multithread=snakemake@threads, minFoldParentOverAbundance=8)
 
 A <- sum(seqtab) / sum(seqtab.all)
 
