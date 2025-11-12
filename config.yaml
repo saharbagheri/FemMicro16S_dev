@@ -44,8 +44,8 @@ primer_investigation: False #True or False
 
 #Reverse complement flag is added to the cutadapt code.
 primers:
-fwd_primer: "PRIMER"
-rev_primer: "PRIMER"
+fwd_primer: ""
+rev_primer: ""
 
 
 ## Primer detection parameters
